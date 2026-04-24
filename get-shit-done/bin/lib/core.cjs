@@ -291,8 +291,9 @@ function loadConfig(cwd) {
     if (parsed.multiRepo === true && !parsed.sub_repos && !parsed.planning?.sub_repos) {
       const detected = detectSubRepos(cwd);
       if (detected.length > 0) {
-        parsed.sub_repos = detected;
         if (!parsed.planning) parsed.planning = {};
+        parsed.planning.sub_repos = detected;
+        delete parsed.sub_repos;
         parsed.planning.commit_docs = false;
         delete parsed.multiRepo;
         configDirty = true;
@@ -306,7 +307,9 @@ function loadConfig(cwd) {
       if (detected.length > 0) {
         const sorted = [...currentSubRepos].sort();
         if (JSON.stringify(sorted) !== JSON.stringify(detected)) {
-          parsed.sub_repos = detected;
+          if (!parsed.planning) parsed.planning = {};
+          parsed.planning.sub_repos = detected;
+          delete parsed.sub_repos;
           configDirty = true;
         }
       }
